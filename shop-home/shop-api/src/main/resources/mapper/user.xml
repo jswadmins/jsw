@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.fh.dao.UserDao" >
+
+    <!--<select id="queryName" parameterType="String" resultType="com.fh.model.User.User.User">
+        select * from s_user where userName=#{userName}
+    </select>
+
+    <select id="queryUser" parameterType="com.fh.model.User.User.User" resultType="com.fh.model.User.User.User">
+        select * from s_user where userName=#{userName}
+    </select>
+
+    <select id="queryPassword" parameterType="String" resultType="com.fh.model.User.User.User">
+        select * from s_user where password=#{password}
+    </select>-->
+
+    <!--<select id="querylist" parameterType="com.fh.model.Brand.BrandSearchParam" resultType="com.fh.model.Brand.PoBrand">
+        select t.* from (select * from j_brand
+        <include refid="aaa"></include>
+        order by id desc) t
+        limit #{start},#{length}
+    </select>
+
+    <select id="queryCount" parameterType="com.fh.model.Brand.BrandSearchParam" resultType="long">
+        select count(*) from j_brand
+        <include refid="aaa"></include>
+    </select>-->
+
+    <!--<insert id="add" parameterType="com.fh.day1_admin.model.Logon">
+       insert into j_logon (userName,password,petName,postbox,cellPhone)
+       values(#{userName},#{password},#{petName},#{postbox},#{cellPhone})
+    </insert>
+    <select id="query" resultType="com.fh.day1_admin.model.Logon">
+        select * from j_logon
+    </select>
+    <select id="queryCount" resultType="long">
+		select count(*) from j_logon
+    </select>
+    <select id="querylist" parameterType="com.fh.day1_admin.model.Logon" resultType="com.fh.day1_admin.model.Logon">
+		select t.* from (select * from j_logon
+           order by userId asc) t
+          limit #{start},#{length}
+    </select>
+    <delete id="delLogon" parameterType="com.fh.day1_admin.model.Logon">
+        delete from j_logon where userId=#{userId}
+    </delete>
+    <select id="toUpdate" parameterType="int" resultType="com.fh.day1_admin.model.Logon" >
+        select * from j_logon where userId=#{userId}
+    </select>
+    <update id="update" parameterType="com.fh.day1_admin.model.Logon">
+        update j_logon set userName=#{userName},password=#{password},petName=#{petName},postbox=#{postbox},cellPhone=#{cellPhone} where userId=#{userId}
+    </update>-->
+
+</mapper>

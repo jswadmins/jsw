@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.fh.shopredis.dao.ProductDao">
+    <select id="queryProduct"  resultType="com.fh.shopredis.model.Product">
+        select * from j_shop
+        limit #{page.start},#{page.length}
+    </select>
+    <select id="countProduct" resultType="long">
+        select count(shopId) from j_shop
+    </select>
+    <select id="productAll" resultType="com.fh.shopredis.model.Product">
+         select * from j_shop
+    </select>
+
+</mapper>

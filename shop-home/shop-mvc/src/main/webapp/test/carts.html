@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>购物车</title>
+    <link rel="stylesheet" href="/js/carts/css/reset.css">
+    <link rel="stylesheet" href="/js/carts/css/carts.css">
+</head>
+<body>
+
+<section class="cartMain">
+
+    <div class="cartMain_hd">
+        <ul class="order_lists cartTop">
+            <li class="list_chk">
+                <!--所有商品全选-->
+                <input type="checkbox" id="all" class="whole_check">
+                <label for="all" id="checkAllStyle"></label>
+                全选
+            </li>
+            <li class="list_con">商品信息</li>
+            <li class="list_price">单价</li>
+            <li class="list_amount">数量</li>
+            <li class="list_sum">金额</li>
+            <li class="list_op">操作</li>
+        </ul>
+    </div>
+
+    <div class="cartBox">
+        <div class="order_content">
+
+        </div>
+    </div>
+    <!--底部-->
+    <div class="bar-wrapper">
+        <div class="bar-right">
+            <div class="piece">已选商品<strong class="piece_num" th:text="${counter}">0</strong>件</div>
+            <div class="totalMoney">共计: <strong class="total_text" th:text="${totalAmount}">0.00</strong></div>
+            <div class="calBtn"><a href="javascript:;" th:class="${counter!=0}?'btn_sty':''">结算</a></div>
+        </div>
+    </div>
+</section>
+<section class="model_bg"></section>
+<section class="my_model">
+    <p class="title">删除宝贝<span class="closeModel">X</span></p>
+    <p>您确认要删除该宝贝吗？</p>
+    <div class="opBtn"><a href="javascript:;" class="dialog-sure">确定</a><a href="javascript:;" class="dialog-close">关闭</a></div>
+</section>
+    <script src="/js/js/jquery.min.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        queryCart();
+    })
+    function addCartNum(productId){
+        $.ajax({
+            url:"/addCartNum",
+            data:{
+                productId:productId
+            },
+            dataType:"json",
+            type:"post",
+            success:function(result){
+                    if(result.code==200){
+                            location.href="/toCarts";
+                    }
+            }
+        })
+    }
+    var $allSonCheckBox=$(".son_check");
+    $allSonCheckBox.click(function () {
+        if ($(this).is(':checked')) {
+            $(this).next('label').addClass('mark');
+        } else {
+            $(this).next('label').removeClass('mark');
+        }
+        checkedProduct();
+    })
+
+
+    function checkedProduct(){
+        var productChecked=$allSonCheckBox;
+        var checkedIds="";
+        var notCheckIds="";
+        $.each(productChecked,function(){
+            if($(this).prop("checked")){
+                checkedIds+=";"+$(this).val();
+            }else{
+                notCheckIds+=";"+$(this).val();
+            }
+        })
+        $.ajax({
+            url:"/changeCheckBox",
+            data:{
+                checkedIds:checkedIds,
+                notCheckIds:notCheckIds
+            },
+            dataType:"json",
+            type:"post",
+            success:function(result){
+                if(result.code==200){
+                    location.href="/toCarts";
+                }
+            }
+        })
+
+    }
+    $(".whole_check").click(function(){
+        var $allCheckBox=$("input[type='checkbox']");
+        if($(this).is(":checked")){
+                $allCheckBox.prop("checked", true);
+                $allCheckBox.next('label').addClass('mark');
+            }else{
+            $allCheckBox.prop("checked", false);
+            $allCheckBox.next('label').removeClass('mark');
+            }
+        checkedProduct();
+    })
+    function queryCart() {
+        var isCheckCount=0;
+        $.ajax({
+            url:"/cart/queryCart.jhtml",
+            dataType:"json",
+            type:"post",
+            success:function (result) {
+                var obj = eval("(" + result.data + ")");
+                var cartHtml = "";
+                for (var i = 0; i < obj.data.values.length; i++) {
+
+                    cartHtml += ' <ul class="order_lists" >';
+                    cartHtml += ' <li class="list_chk">';
+                    cartHtml += ' <input type="checkbox" id="checkbox_' + obj.data.values[i].productId + '" name="allChecks" class="son_check" uu="'+obj.data.values[i].productId+'" value="' + obj.data.values[i].productId + '" checked="' + obj.data.values[i].isChecked + '">';
+                    if(obj.data.values[i].isChecked==true){
+                        cartHtml += '<label id="'+obj.data.values[i].productId+'" onclick="queryCartId('+obj.data.values[i].productId+')" rel="aa" class="mark"></label>';
+                        isCheckCount++;
+                    }else{
+                        cartHtml += '<label id="'+obj.data.values[i].productId+'" onclick="queryCartId('+obj.data.values[i].productId+')"></label>';
+                    }
+                    cartHtml += ' </li>';
+                    cartHtml += ' <li class="list_con">';
+                    cartHtml += '  <div class="list_img"><a href="javascript:;"><img src="' + obj.data.values[i].mainImg + '" alt=""></a></div>';
+                    cartHtml += ' <div class="list_text"><a href="javascript:;"><span>' + obj.data.values[i].productName + '</span></a></div>';
+                    cartHtml += ' </li>';
+                    cartHtml += ' <li class="list_price">';
+                    cartHtml += '  <p class="price">￥<span>' + obj.data.values[i].price + '</span></p>';
+                    cartHtml += '</li>';
+                    cartHtml += '<li class="list_amount">';
+                    cartHtml += ' <div class="amount_box">';
+                    if(obj.data.values[i].count<=1){
+                    }else{
+                        cartHtml += '  <a href="javascript:void(0);" class="reduce reSty" onclick="removeCartNum(' + obj.data.values[i].productId + ')">-</a>';
+                    }
+                    cartHtml += '  <input type="text" class="sum" oninput="changeContent(' + obj.data.values[i].productId + ',this)" oldSum="' + obj.data.values[i].count + '" productId="' + obj.data.values[i].productId + '" value="' + obj.data.values[i].count + '">';
+                    cartHtml += ' <a href="javascript:void(0);" onclick="addCartNum(' + obj.data.values[i].productId + ')"  class="plus">+</a>';
+                    cartHtml += '  </div>';
+                    cartHtml += '   </li>';
+                    cartHtml += '  <li class="list_sum">';
+                    cartHtml += '   <p class="sum_price">￥<span >' + obj.data.values[i].subtotal + '</span></p>';
+                    cartHtml += ' </li>';
+                    cartHtml += ' <li class="list_op">';
+                    cartHtml += '  <p class="del"><a href="javascript:;" class="delBtn" onclick="deleteProduct(' + obj.data.values[i].productId + ')">移除商品</a></p>';
+                    cartHtml += ' </li>';
+                    cartHtml += '</ul>';
+                }
+                $(".order_content").html(cartHtml);
+                if(isCheckCount!=0 && isCheckCount == obj.data.values.length){
+                    $("#all").attr("checked",true);
+                    $("#checkAllStyle").addClass("mark");
+                }else {
+                    $("#checkAllStyle").removeClass("mark");
+                }
+                $(".piece_num").html(isCheckCount);
+                $(".total_text").html(obj.data.total);
+
+                if (isCheckCount > 0) {
+                    $(".calBtn").find("a").addClass("btn_sty");
+                } else {
+                    $(".calBtn").find("a").removeClass("btn_sty");
+                    $(".total_text").html(0);
+                }
+            }
+        })
+    }
+
+    $("#all").click(function () {
+        $.ajax({
+            url:"/cart/queryCartIdAll.jhtml",
+            type: "post",
+            dataType: "json",
+            async:false,
+            success:function (result) {
+                queryCart();
+            }
+         })
+    })
+    function changeContent(productId,count) {
+        var s = $(count).val();
+        $.ajax({
+            url: "/cart/changeContent.jhtml",
+            type: "post",
+            dataType: "json",
+            async: false,
+            data: {
+                "productId": productId,
+                "count":s
+            },
+            success: function (result) {
+                queryCart();
+                addCartNum();
+                removeCartNum();
+            }
+        })
+    }
+    function queryCartId(productId) {
+        $.ajax({
+            url: "/cart/queryCartId.jhtml",
+            type: "post",
+            dataType: "json",
+            data:{"productId":productId},
+            async: false,
+            data: {
+                "productId": productId
+            },
+            success: function (result) {
+                    queryCart();
+                }
+        })
+    }
+    //+
+    function addCartNum(productId) {
+            $.ajax({
+                url:"/cart/cartsShow.jhtml",
+                type:"post",
+                dataType:"json",
+                async:false,
+                data:{
+                    "productId":productId
+                },
+                success:function (result) {
+                    queryCart();
+                }
+            })
+        }
+    //-
+    function removeCartNum(productId) {
+          $.ajax({
+            url:"/cart/removeCartNum.jhtml",
+            type:"post",
+            dataType:"json",
+            async:false,
+            data:{
+                "productId":productId
+            },
+            success:function (result) {
+                queryCart();
+            }
+        })
+    }
+    function deleteProduct(productId) {
+        $.ajax({
+            url:"/cart/deleteProduct.jhtml",
+            type:"post",
+            dataType:"json",
+            async:false,
+            data:{
+                "productId":productId
+            },
+            success:function (result) {
+                queryCart();
+            }
+        })
+    }
+
+    var $all_sum = $('.sum');
+    $all_sum.blur(function () {
+        var r = /^\+?[1-9][0-9]*$/;
+        var newValue=$(this).val();
+        var oldValue=$(this).attr("oldSum");
+        if (!r.test(newValue)) {
+            $(this).val(oldValue);
+            alert("输入的数字有误");
+            return false;
+        }
+        if(newValue!=oldValue){
+            var productId=$(this).attr("productId");
+            $.ajax({
+                url:"/changCartNum",
+                data:{
+                    productId:productId,
+                    newNum:newValue
+                },
+                dataType:"json",
+                type:"post",
+                success:function(result){
+                    if(result.code==200){
+                        location.href="/toCarts";
+                    }
+                }
+            })
+        }
+
+    })
+
+</script>
+</body>
+</html>

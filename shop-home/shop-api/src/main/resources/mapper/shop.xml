@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.fh.dao.ShopDao" >
+
+    <sql id="aaa">
+        <where>
+            <if test="shopName!=null and shopName!=''">
+                shopName like concat('%',#{shopName},'%')
+            </if>
+            <if test="shopId!=null and shopId!=''">
+                shopId like concat('%',#{pid},'%')
+            </if>
+            <if test="src!=null and src!=''">
+                imgPath like concat('%',#{src},'%')
+            </if>
+            <if test="shopId!=null and shopId!=''">
+                and shopId like concat('%',#{shopId},'%')
+            </if>
+            <if test="minprice!=null and minprice >0">
+                and price >=#{minprice}
+            </if>
+            <if test="maxprice!=null and maxprice >=minprice">
+                and price &lt;= #{maxprice}
+            </if>
+            <if test="mincreate!=null">
+                and createtime >= #{mincreate}
+            </if>
+            <if test="maxcreate!=null and maxcreate >= mincreate">
+                and createtime &lt;= #{maxcreate}
+            </if>
+        </where>
+    </sql>
+
+    <select id="getProductById" parameterType="java.lang.Integer" resultType="com.fh.model.shop.Shop">
+        select DISTINCT p.shopId,p.shopName,p.subtitle,p.imgPath,p.price,p.stock from j_shop p
+        where p.shopId=#{productId}
+    </select>
+
+    <select id="queryList" resultType="com.fh.model.shop.Shop">
+        select * from s_shop
+    </select>
+
+    <select id="querylist" parameterType="com.fh.model.shop.ShopSearchParam" resultType="com.fh.model.shop.PoShop">
+        select t.* from (select * from j_shop
+        <include refid="aaa"></include>
+        order by shopId desc) t
+        limit #{start},#{length}
+    </select>
+
+    <select id="queryCount" parameterType="com.fh.model.shop.ShopSearchParam" resultType="long">
+        select count(*) from j_shop
+        <include refid="aaa"></include>
+    </select>
+
+    <!--<insert id="add" parameterType="com.fh.day1_admin.model.Logon">
+       insert into j_logon (userName,password,petName,postbox,cellPhone)
+       values(#{userName},#{password},#{petName},#{postbox},#{cellPhone})
+    </insert>
+    <select id="query" resultType="com.fh.day1_admin.model.Logon">
+        select * from j_logon
+    </select>
+    <select id="queryCount" resultType="long">
+		select count(*) from j_logon
+    </select>
+    <select id="querylist" parameterType="com.fh.day1_admin.model.Logon" resultType="com.fh.day1_admin.model.Logon">
+		select t.* from (select * from j_logon
+           order by userId asc) t
+          limit #{start},#{length}
+    </select>
+    <delete id="delLogon" parameterType="com.fh.day1_admin.model.Logon">
+        delete from j_logon where userId=#{userId}
+    </delete>
+    <select id="toUpdate" parameterType="int" resultType="com.fh.day1_admin.model.Logon" >
+        select * from j_logon where userId=#{userId}
+    </select>
+    <update id="update" parameterType="com.fh.day1_admin.model.Logon">
+        update j_logon set userName=#{userName},password=#{password},petName=#{petName},postbox=#{postbox},cellPhone=#{cellPhone} where userId=#{userId}
+    </update>-->
+
+</mapper>

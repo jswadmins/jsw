@@ -1,0 +1,21 @@
+server:
+  port: 8090
+spring:
+  thymeleaf:
+       prefix: classpath:/templates/
+       suffix: .html
+  mvc:
+    view:
+      prefix: /resources/templates/
+  datasource:
+    url: jdbc:mysql://localhost:3309/idea?useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: 12345
+    driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+mybatis:
+  config-location: classpath:mybatis/mybatis-config.xml
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.fh.model
